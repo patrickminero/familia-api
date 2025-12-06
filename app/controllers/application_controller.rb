@@ -9,7 +9,7 @@ class ApplicationController < ActionController::API
     render json: {
       data: nil,
       message: "You are not authorized to perform this action",
-      errors: ["unauthorized"]
+      errors: ["unauthorized"],
     }, status: :forbidden
   end
 end
