@@ -1,22 +1,18 @@
+# spec/factories/profiles.rb
+
 FactoryBot.define do
   factory :profile do
-    user
+    association :user
     name { Faker::Name.name }
-    phone { Faker::PhoneNumber.phone_number }
-    timezone { "America/New_York" }
-    bio { Faker::Lorem.paragraph }
-    notification_preferences do
-      {
-        email: true,
-        push: true,
-        sms: false,
-      }
-    end
-    app_preferences do
-      {
-        theme: "light",
-        language: "en",
-      }
+    phone { Faker::PhoneNumber.cell_phone_in_e164 }
+    timezone { "UTC" }
+    bio { Faker::Lorem.sentence }
+
+    # Trait for minimal profile
+    trait :minimal do
+      name { "Test User" }
+      phone { nil }
+      bio { nil }
     end
   end
 end
