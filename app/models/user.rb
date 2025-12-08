@@ -2,6 +2,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :validatable
 
   has_one :profile, dependent: :destroy
+  has_many :owned_households, class_name: "Household", dependent: :destroy
+  has_many :household_members, dependent: :nullify
+  has_many :households, through: :household_members
 
   accepts_nested_attributes_for :profile
 

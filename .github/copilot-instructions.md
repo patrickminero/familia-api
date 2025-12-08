@@ -4,6 +4,8 @@
 
 This is a Rails 7 API-only application for family household management with a focus on medical record tracking.
 
+**📖 Domain Model Reference:** See [docs/DOMAIN_MODEL.md](/docs/DOMAIN_MODEL.md) for complete entity relationships, attributes, and business rules.
+
 ## Code Style & Conventions
 
 - Use service objects for complex business logic (app/services/)
