@@ -125,23 +125,31 @@ db-setup:
 
 test:
 	@echo "🧪 Running test suite..."
-	docker-compose exec web bundle exec rspec
+	docker-compose run --rm test
 
 test-fast:
 	@echo "🧪 Running tests (fast mode)..."
-	docker-compose exec web bundle exec rspec --format progress
+	docker-compose run --rm test bundle exec rspec --format progress
 
 test-models:
 	@echo "🧪 Running model tests..."
-	docker-compose exec web bundle exec rspec spec/models
+	docker-compose run --rm test bundle exec rspec spec/models
 
 test-requests:
 	@echo "🧪 Running request tests..."
-	docker-compose exec web bundle exec rspec spec/requests
+	docker-compose run --rm test bundle exec rspec spec/requests
+
+test-docker-prepare:
+	@echo "🧪 Preparing test database in Docker..."
+	docker-compose run --rm test bundle exec rails db:test:prepare
+
+test-docker-rspec:
+	@echo "🧪 Running rspec in Docker test service..."
+	docker-compose run --rm test bundle exec rspec
 
 wip:
 	@echo "🧪 Running WIP tests only..."
-	docker-compose exec web bundle exec rspec --tag wip
+	docker-compose run --rm test bundle exec rspec --tag wip
 
 lint:
 	@echo "🔍 Running linter..."

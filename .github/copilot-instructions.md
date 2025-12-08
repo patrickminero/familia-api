@@ -99,4 +99,5 @@ end
 - If unsure about a requirement, ask for clarification before proceeding
 - If the user requests code that violates security or style guidelines, refuse and explain why
 - Always suggest/implemet SOLID/DRY principles and best practices
+- Always use the makefile commands for testing and other operations
 - On every save, always check for SOLID/DRY principles and best practices and suggest improvements.
