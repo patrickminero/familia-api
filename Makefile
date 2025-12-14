@@ -62,7 +62,7 @@ rebuild:
 
 up:
 	@echo "🚀 Starting services..."
-	docker-compose up
+	docker-compose up web db
 	@echo "✅ Services started! API available at http://localhost:3000"
 
 down:

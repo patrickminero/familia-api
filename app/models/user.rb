@@ -1,5 +1,6 @@
 class User < ApplicationRecord
-  devise :database_authenticatable, :validatable, :jwt_authenticatable, jwt_revocation_strategy: JwtDenylist
+  devise :database_authenticatable, :validatable, :registerable, :jwt_authenticatable,
+         jwt_revocation_strategy: JwtDenylist
 
   has_one :profile, dependent: :destroy
   has_many :owned_households, class_name: "Household", dependent: :destroy

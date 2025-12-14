@@ -1,7 +1,7 @@
 module Api
   module V1
     class ProfilesController < ApplicationController
-      before_action :authenticate_user!
+      before_action :authenticate_api_v1_user!
       before_action :set_profile, only: %i[show update]
 
       def show

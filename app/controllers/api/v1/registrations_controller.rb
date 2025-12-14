@@ -1,23 +1,16 @@
 module Api
   module V1
     class RegistrationsController < ApplicationController
-      skip_before_action :authenticate_user!, only: [:create]
+      skip_before_action :authenticate_api_v1_user!, only: :create
 
       def create
         user = User.new(sign_up_params)
 
         if user.save
-          user.reload # Ensure profile association is loaded
-          token = encode_token(user)
-          render json: {
-            token: token,
-            data: UserSerializer.new(user).serializable_hash[:data][:attributes],
-            message: "Signed up successfully.",
-          }, status: :created
+          render_json(data: { id: user.id, email: user.email }, message: "User created", status: :created)
         else
-          render json: {
-            errors: user.errors.full_messages,
-          }, status: :unprocessable_content
+          render_json(data: nil, message: "Failed to create user", errors: user.errors.full_messages,
+                      status: :unprocessable_entity)
         end
       end
 
@@ -25,12 +18,7 @@ module Api
 
       def sign_up_params
         params.require(:user).permit(:email, :password, :password_confirmation,
-                                     profile_attributes: %i[name phone timezone bio])
-      end
-
-      def encode_token(user)
-        payload = { user_id: user.id, exp: 30.days.from_now.to_i }
-        JWT.encode(payload, Rails.application.credentials.devise_jwt_secret_key || Rails.application.secret_key_base)
+                                     profile_attributes: %i[first_name last_name])
       end
     end
   end
