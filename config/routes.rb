@@ -3,7 +3,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       devise_for :users,
                  skip: %i[passwords confirmations],
-                 path: "",
+                 path: "users",
                  path_names: {
                    sign_in: "login",
                    sign_out: "logout",

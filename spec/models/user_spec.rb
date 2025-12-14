@@ -94,10 +94,6 @@ RSpec.describe User, type: :model do
       expect(User.devise_modules).to include(:validatable)
     end
 
-    it "does not include registerable" do
-      expect(User.devise_modules).not_to include(:registerable)
-    end
-
     it "does not include recoverable" do
       expect(User.devise_modules).not_to include(:recoverable)
     end

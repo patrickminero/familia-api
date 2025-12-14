@@ -12,6 +12,11 @@ class ApplicationController < ActionController::API
     render json: { data: data, message: message, errors: errors }, status: status
   end
 
+  def encode_token(user)
+    payload = { user_id: user.id, exp: 30.days.from_now.to_i }
+    JWT.encode(payload, Rails.application.credentials.devise_jwt_secret_key || Rails.application.secret_key_base)
+  end
+
   def current_user
     current_api_v1_user
   end
