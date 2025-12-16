@@ -23,7 +23,7 @@ class HouseholdInvitation < ApplicationRecord
 
   def accept!(user)
     raise "Invitation has expired" if expired?
-    raise "User already linked to a household member" if user.household_members.where(household: household).exists?
+    raise "User already linked to a household member" if user.household_members.exists?(household: household)
 
     ActiveRecord::Base.transaction do
       household_member.update!(user: user)

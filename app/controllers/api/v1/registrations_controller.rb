@@ -1,20 +1,23 @@
+require_relative "../../../services/users/register_service"
+require_relative "../../../services/jwt/token_generator"
+
 module Api
   module V1
     class RegistrationsController < ApplicationController
       skip_before_action :authenticate_api_v1_user!, only: :create
 
       def create
-        user = User.new(sign_up_params)
+        result = Users::RegisterService.new(sign_up_params).call
 
-        if user.save
-          token = encode_token(user)
+        if result[:user]
+          token = Jwt::TokenGenerator.call(result[:user])
           render json: {
             token: token,
-            data: UserSerializer.new(user).serializable_hash[:data][:attributes],
+            data: UserSerializer.new(result[:user]).serializable_hash[:data][:attributes],
             message: "User created",
           }, status: :created
         else
-          render_json(data: nil, message: "Failed to create user", errors: user.errors.full_messages,
+          render_json(data: nil, message: "Failed to create user", errors: result[:errors] || [],
                       status: :unprocessable_entity)
         end
       end
@@ -32,7 +35,7 @@ module Api
             :timezone,
             :bio,
             { notification_preferences: {} },
-            { app_preferences: {} }
+            { app_preferences: {} },
           ]
         )
       end

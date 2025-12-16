@@ -155,6 +155,10 @@ lint:
 	@echo "🔍 Running linter..."
 	docker-compose exec web bundle exec rubocop
 
+fix-all:
+	@echo "Fixing all rubocop offenses..."
+	docker-compose exec web bundle exec rubocop --autocorrect-all
+
 bundle:
 	@echo "📦 Installing gems..."
 	docker-compose exec web bundle install

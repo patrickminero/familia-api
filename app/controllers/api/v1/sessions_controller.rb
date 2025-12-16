@@ -7,16 +7,12 @@ module Api
         user = User.find_by(email: login_params[:email])
 
         if user&.valid_password?(login_params[:password])
-          token = encode_token(user)
-          render json: {
-            token: token,
-            data: UserSerializer.new(user).serializable_hash[:data][:attributes],
-            message: "Logged in successfully.",
-          }, status: :ok
+          token = Jwt::TokenGenerator.call(user)
+          data = UserSerializer.new(user).serializable_hash[:data][:attributes]
+          data_with_token = data.merge(token: token)
+          render_json(data: data_with_token, message: "Logged in successfully.")
         else
-          render json: {
-            errors: ["Invalid email or password."],
-          }, status: :unauthorized
+          render_json(data: nil, message: "Invalid email or password.", errors: ["unauthorized"], status: :unauthorized)
         end
       end
 
@@ -24,15 +20,11 @@ module Api
         if current_user
           jwt_payload = JWT.decode(token_from_header,
                                    Rails.application.credentials.devise_jwt_secret_key || Rails.application.secret_key_base).first
-          JwtDenylist.create!(jti: jwt_payload["jti"], exp: Time.at(jwt_payload["exp"]))
-
-          render json: {
-            message: "Logged out successfully.",
-          }, status: :ok
+          JwtDenylist.create!(jti: jwt_payload["jti"], exp: Time.zone.at(jwt_payload["exp"]))
+          render_json(data: nil, message: "Logged out successfully.")
         else
-          render json: {
-            errors: ["Couldn't find an active session."],
-          }, status: :unauthorized
+          render_json(data: nil, message: "Couldn't find an active session.", errors: ["unauthorized"],
+                      status: :unauthorized)
         end
       end
 
@@ -42,13 +34,8 @@ module Api
         params.require(:user).permit(:email, :password)
       end
 
-      def encode_token(user)
-        payload = { user_id: user.id, exp: 30.days.from_now.to_i }
-        JWT.encode(payload, Rails.application.credentials.devise_jwt_secret_key || Rails.application.secret_key_base)
-      end
-
       def token_from_header
-        request.headers["Authorization"]&.split(" ")&.last
+        request.headers["Authorization"]&.split&.last
       end
     end
   end
