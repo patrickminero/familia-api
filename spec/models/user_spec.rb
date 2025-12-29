@@ -30,7 +30,7 @@ RSpec.describe User, type: :model do
     it { is_expected.to accept_nested_attributes_for(:profile) }
 
     it "creates user with profile in one call" do
-      user = described_class.create!(
+      user = User.create!(
         email: "test@example.com",
         password: "password123",
         profile_attributes: { name: "John Doe" }
@@ -87,19 +87,23 @@ RSpec.describe User, type: :model do
   # Devise modules
   describe "devise modules" do
     it "includes database_authenticatable" do
-      expect(described_class.devise_modules).to include(:database_authenticatable)
+      expect(User.devise_modules).to include(:database_authenticatable)
     end
 
     it "includes validatable" do
-      expect(described_class.devise_modules).to include(:validatable)
+      expect(User.devise_modules).to include(:validatable)
+    end
+
+    it "includes registerable" do
+      expect(User.devise_modules).to include(:registerable)
     end
 
     it "does not include recoverable" do
-      expect(described_class.devise_modules).not_to include(:recoverable)
+      expect(User.devise_modules).not_to include(:recoverable)
     end
 
     it "does not include rememberable" do
-      expect(described_class.devise_modules).not_to include(:rememberable)
+      expect(User.devise_modules).not_to include(:rememberable)
     end
   end
 
@@ -141,6 +145,7 @@ RSpec.describe User, type: :model do
         USER@foo.COM
         A_US-ER@foo.bar.org
         first.last@foo.jp
+        alice+bob@baz.cn
       ]
 
       valid_emails.each do |email|
@@ -201,9 +206,8 @@ RSpec.describe User, type: :model do
       user = create(:user)
       original_updated_at = user.updated_at
 
-      sleep 1
-      user.email = "something@something.com"
-      user.save!
+      sleep 0.01
+      user.touch
 
       expect(user.updated_at).to be > original_updated_at
     end
@@ -215,7 +219,7 @@ RSpec.describe User, type: :model do
       create(:user, email: "test@example.com")
 
       expect do
-        described_class.create!(email: "test@example.com", password: "password123")
+        User.create!(email: "test@example.com", password: "password123")
       end.to raise_error(ActiveRecord::RecordInvalid)
     end
 

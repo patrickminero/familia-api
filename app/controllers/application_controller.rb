@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include ActionController::MimeResponds
   include Pundit::Authorization
 
   include Devise::Controllers::Helpers

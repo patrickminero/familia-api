@@ -11,6 +11,7 @@ class HouseholdMember < ApplicationRecord
   validates :name, presence: true
   validates :relationship, presence: true, inclusion: { in: RELATIONSHIPS }
   validates :role, presence: true
+  validates :household_id, presence: true
   validates :user_id, uniqueness: { scope: :household_id }, if: :user_id?
 
   scope :registered, -> { where.not(user_id: nil) }

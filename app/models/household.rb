@@ -5,6 +5,7 @@ class Household < ApplicationRecord
   has_many :invitations, class_name: "HouseholdInvitation", dependent: :destroy
 
   validates :name, presence: true
+  validates :user_id, presence: true
 
   after_create :create_admin_member
 

@@ -101,6 +101,3 @@ end
 - Always suggest/implemet SOLID/DRY principles and best practices
 - Always use the makefile commands for testing and other operations
 - On every save, always check for SOLID/DRY principles and best practices and suggest improvements.
-
-# Guidance: Auth & Tokens
-- Prefer extracting JWT/token generation and verification into a small service object (e.g. `app/services/jwt/token_generator.rb`) so controllers remain thin and logic is testable and replaceable.
