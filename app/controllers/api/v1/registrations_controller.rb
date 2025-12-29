@@ -1,6 +1,8 @@
 module Api
   module V1
     class RegistrationsController < Devise::RegistrationsController
+      include JwtTokenHelper
+
       respond_to :json
       skip_before_action :authenticate_api_v1_user!, only: :create
 
@@ -11,8 +13,8 @@ module Api
         if resource.save
           sign_in(resource_name, resource, store: false)
 
-          token = extract_jwt_token
-          expires_at = decode_jwt_exp(token)
+          token = jwt_token_from_env_or_header
+          expires_at = jwt_exp_from_token(token)
 
           render_json(
             data: {
@@ -36,26 +38,6 @@ module Api
       def sign_up_params
         params.require(:user).permit(:email, :password, :password_confirmation,
                                      profile_attributes: %i[name timezone bio phone])
-      end
-
-      def extract_jwt_token
-        token = request.env["warden-jwt_auth.token"] || response.headers["Authorization"]&.split&.last
-        return nil unless token
-
-        token.to_s.start_with?("Bearer ") ? token.split.last : token
-      end
-
-      def decode_jwt_exp(token)
-        return nil unless token
-
-        begin
-          payload = JWT.decode(token, ENV.fetch("DEVISE_JWT_SECRET_KEY") do
-            Rails.application.credentials.devise_jwt_secret_key || Rails.application.secret_key_base
-          end).first
-          Time.at(payload["exp"]).utc.iso8601 if payload && payload["exp"]
-        rescue JWT::DecodeError
-          nil
-        end
       end
     end
   end
